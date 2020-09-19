@@ -297,6 +297,7 @@ pub fn format_primitive(primitive: &Primitive, field_name: Option<&String>) -> S
 
 /// Format a duration in nanoseconds into a string
 pub fn format_duration(duration: &BigInt) -> String {
+    let is_zero = duration.is_zero();
     // FIXME: This involves a lot of allocation, but it seems inevitable with BigInt.
     let big_int_1000 = BigInt::from(1000);
     let big_int_60 = BigInt::from(60);
@@ -328,7 +329,8 @@ pub fn format_duration(duration: &BigInt) -> String {
         output_prep.push(format!("{}min", mins));
     }
 
-    if !secs.is_zero() {
+    // output 0sec for zero duration
+    if is_zero || !secs.is_zero() {
         output_prep.push(format!("{}sec", secs));
     }
 
@@ -337,7 +339,7 @@ pub fn format_duration(duration: &BigInt) -> String {
     }
 
     if !micros.is_zero() {
-        output_prep.push(format!("{}us", micros));
+        output_prep.push(format!("{}μs", micros));
     }
 
     if !nanos.is_zero() {
